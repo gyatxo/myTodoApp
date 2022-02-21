@@ -2,6 +2,8 @@
 const task = document.getElementById('task');
 const prior = document.getElementById('prior');
 const desc = document.getElementById('desc');
+const add = document.getElementById('add');
+const editBtn = document.getElementById('editBtn');
 const div = document.getElementById('lecture-ul')
 const urlTodo = 'https://infodev-server.herokuapp.com/api/todos' ;
 
@@ -22,16 +24,17 @@ const renderTodo = function (data, className = '') {
         </div>
         <div>
             <button class="btn btn-success" style='${opc}' onclick="taskCompleted('${data._id}','${data.name}','${data.priority}','${data.description}' )"><i class="fas fa-check"></i></i></button>
-            <button class="btn btn-warning" style='${opc}' onclick="editTodo('${data._id}')"><i class="fas fa-pencil"></i></i></button>
+            <button class="btn btn-warning" style='${opc}' onclick="editTodo('${data._id}' )"><i class="fas fa-pencil"></i></i></button>
             <button class="btn btn-danger" onclick="deleteTodo('${data._id}')"><i class="far fa-trash-alt"></i></button>
         </div>
      </li>`;
   
     div.insertAdjacentHTML('beforeend', html);
-  };
+};
+
 
   //function to get all the data from api to render on browser at the begining
-  (async function () {
+(async function () {
   
       const res = await fetch(urlTodo, {
       method: 'GET',
@@ -44,7 +47,10 @@ const renderTodo = function (data, className = '') {
   data.forEach(element => {
       renderTodo(element)
   });
-  })()
+})()
+
+
+
 
 //post method 
 function addTodo(e){
@@ -79,8 +85,21 @@ const deleteTodo = async function (id) {
    
 }
 
-//edit list by id
+// edit button to redirect data from id to the form
+const renderEditForm = function (id,name,priority,description){
+    add.style.backgroundColor = 'black';
+    console.log(id)
+    task.value= name;
+    prior.value= priority;
+    desc.value = description;
+    const edit = `<button class="primary" type="submit" onclick="editTodo('${id}')" >Edit</button>`;
+    editBtn.insertAdjacentHTML('beforeend', edit);
+
+}
+
+//edit list by id but we need to provide the info in the input section
 const editTodo = async function (id) {
+    console.log(id)
     const res = await fetch('https://infodev-server.herokuapp.com/api/todos/'+id, {
     method: 'PUT',
     headers:{
@@ -90,7 +109,8 @@ const editTodo = async function (id) {
     body:JSON.stringify({name:task.value,priority:prior.value,description:desc.value})   
 });
 const data = await res.json();
-location.reload();
+// location.reload();
+console.log(data)
 }
 
 //change status to completed
@@ -104,5 +124,6 @@ const taskCompleted = async function(id,name,priority,description){
     body:JSON.stringify({name:name,priority:priority,description:description,completed:true})   
     });
     const data = await res.json();
-    location.reload()
+    console.log(data)
+    // location.reload()
 }

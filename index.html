@@ -49,15 +49,18 @@
                         </div>
                     </div>
                 </div>
-                <button class="success" type="submit" onclick="addTodo(event)">Add</button>
+                <span id="editBtn" >
+                <button class="success" type="submit" id="add" onclick="addTodo(event)">Add</button>
+                </span>
             </form>
-            <div id="lecture-list" onload="getTodo()">
+            <div id="lecture-list" >
                 <ul id="lecture-ul">
 
 
 
-
+                    
                 </ul>
+                
             </div>
 
         </div>
