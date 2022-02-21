@@ -1,13 +1,11 @@
-
-
+//creating variables to retrieve the data from input
 const task = document.getElementById('task');
 const prior = document.getElementById('prior');
 const desc = document.getElementById('desc');
 const div = document.getElementById('lecture-ul')
-
-
 const urlTodo = 'https://infodev-server.herokuapp.com/api/todos' ;
 
+//function that render the html elements
 const renderTodo = function (data, className = '') {
     const cN = data.completed ? 'text-decoration:line-through;' : '';
     const opc = data.completed ? 'opacity:0;' : '';
@@ -24,7 +22,7 @@ const renderTodo = function (data, className = '') {
         </div>
         <div>
             <button class="btn btn-success" style='${opc}' onclick="taskCompleted('${data._id}','${data.name}','${data.priority}','${data.description}' )"><i class="fas fa-check"></i></i></button>
-            <button class="btn btn-warning" style='${opc}' onclick="putTodo('${data._id}')"><i class="fas fa-pencil"></i></i></button>
+            <button class="btn btn-warning" style='${opc}' onclick="editTodo('${data._id}')"><i class="fas fa-pencil"></i></i></button>
             <button class="btn btn-danger" onclick="deleteTodo('${data._id}')"><i class="far fa-trash-alt"></i></button>
         </div>
      </li>`;
@@ -32,6 +30,23 @@ const renderTodo = function (data, className = '') {
     div.insertAdjacentHTML('beforeend', html);
   };
 
+  //function to get all the data from api to render on browser at the begining
+  (async function () {
+  
+      const res = await fetch(urlTodo, {
+      method: 'GET',
+      headers:{
+          'Accept': 'application/json, text/plain',
+          'Content-type' : 'application/json',
+      },  
+  });
+  const data = await res.json();
+  data.forEach(element => {
+      renderTodo(element)
+  });
+  })()
+
+//post method 
 function addTodo(e){
     e.preventDefault();
     fetch(urlTodo,
@@ -52,26 +67,7 @@ function addTodo(e){
     .catch((err)=> console.log(err))
 }
 
-const getTodo = async function () {
-
-    const res = await fetch(urlTodo, {
-    method: 'GET',
-    headers:{
-        'Accept': 'application/json, text/plain',
-        'Content-type' : 'application/json',
-    },
-    // body:JSON.stringify({name:task,priority:prior,description:desc})   
-});
-const data = await res.json();
-data.forEach(element => {
-    renderTodo(element)
-});
-
-// task.value(data.name)
-}
-
-getTodo()
-
+//delete method
 const deleteTodo = async function (id) {
 
     const res = await fetch('https://infodev-server.herokuapp.com/api/todos/'+id, {
@@ -82,7 +78,9 @@ const deleteTodo = async function (id) {
     location.reload()
    
 }
-const putTodo = async function (id) {
+
+//edit list by id
+const editTodo = async function (id) {
     const res = await fetch('https://infodev-server.herokuapp.com/api/todos/'+id, {
     method: 'PUT',
     headers:{
@@ -90,12 +88,12 @@ const putTodo = async function (id) {
         'Content-type' : 'application/json',
     },
     body:JSON.stringify({name:task.value,priority:prior.value,description:desc.value})   
-    });
-    const data = await res.json();
-    location.reload();
+});
+const data = await res.json();
+location.reload();
 }
 
-
+//change status to completed
 const taskCompleted = async function(id,name,priority,description){
     const res = await fetch('https://infodev-server.herokuapp.com/api/todos/'+id, {
     method: 'PUT',
