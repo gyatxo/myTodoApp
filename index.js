@@ -24,7 +24,7 @@ const renderTodo = function (data, className = '') {
         </div>
         <div>
             <button class="btn btn-success" style='${opc}' onclick="taskCompleted('${data._id}','${data.name}','${data.priority}','${data.description}' )"><i class="fas fa-check"></i></i></button>
-            <button class="btn btn-warning" style='${opc}' onclick="editTodo('${data._id}' )"><i class="fas fa-pencil"></i></i></button>
+            <button class="btn btn-warning" style='${opc}' onclick="editTodo('${data._id}')"><i class="fas fa-pencil"></i></i></button>
             <button class="btn btn-danger" onclick="deleteTodo('${data._id}')"><i class="far fa-trash-alt"></i></button>
         </div>
      </li>`;
@@ -75,7 +75,6 @@ function addTodo(e){
 
 //delete method
 const deleteTodo = async function (id) {
-
     const res = await fetch('https://infodev-server.herokuapp.com/api/todos/'+id, {
     method: 'DELETE',
     });
@@ -86,6 +85,8 @@ const deleteTodo = async function (id) {
 }
 
 // edit button to redirect data from id to the form
+// using this did not work something. the data inputed in the form did not get updated in the api so i did not use this
+// please check what i did wrong. to implement this call function in the edit button in li tag instead of the editTodo function.
 const renderEditForm = function (id,name,priority,description){
     add.style.backgroundColor = 'black';
     console.log(id)
@@ -98,6 +99,8 @@ const renderEditForm = function (id,name,priority,description){
 }
 
 //edit list by id but we need to provide the info in the input section
+// 1. go to the input form and type what needs to be updated 
+// 2. click the edit button instead of the add button.
 const editTodo = async function (id) {
     console.log(id)
     const res = await fetch('https://infodev-server.herokuapp.com/api/todos/'+id, {
@@ -109,8 +112,7 @@ const editTodo = async function (id) {
     body:JSON.stringify({name:task.value,priority:prior.value,description:desc.value})   
 });
 const data = await res.json();
-// location.reload();
-console.log(data)
+location.reload();
 }
 
 //change status to completed
